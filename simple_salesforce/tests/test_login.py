@@ -21,7 +21,7 @@ class TestSalesforceLogin(unittest.TestCase):
 
     def setUp(self):
         """Setup the SalesforceLogin tests"""
-        request_patcher = patch('simple_salesforce.login.requests')
+        request_patcher = patch("simple_salesforce.login.requests")
         self.mockrequest = request_patcher.start()
         self.addCleanup(request_patcher.stop)
 
@@ -46,7 +46,7 @@ class TestSalesforceLogin(unittest.TestCase):
 
         # pylint: disable=missing-docstring,unused-argument
         def on_response(*args, **kwargs):
-            session_state['used'] = True
+            session_state["used"] = True
 
         session = requests.Session()
         session.hooks = {
@@ -58,6 +58,7 @@ class TestSalesforceLogin(unittest.TestCase):
             **salesforce_login_kwargs
             )
         self.assertTrue(session_state['used'])
+
         self.assertEqual(session_id, tests.SESSION_ID)
         self.assertEqual(instance, urlparse(tests.SERVER_URL).netloc)
 
@@ -79,6 +80,7 @@ class TestSalesforceLogin(unittest.TestCase):
             re.compile(r'^https://testdomain.my.salesforce.com/.*$'),
             login_args)
 
+
     @responses.activate
     def test_custom_session_success(self):
         """Test custom session"""
@@ -92,20 +94,20 @@ class TestSalesforceLogin(unittest.TestCase):
             'used': False,
             }
 
+
         # pylint: disable=missing-docstring,unused-argument
         def on_response(*args, **kwargs):
-            session_state['used'] = True
+            session_state["used"] = True
 
         session = requests.Session()
         session.hooks = {
             'response': on_response,
             }
+
         session_id, instance = SalesforceLogin(
-            session=session,
-            username='foo@bar.com',
-            password='password',
-            security_token='token')
-        self.assertTrue(session_state['used'])
+            session=session, username="foo@bar.com", password="password", security_token="token"
+        )
+        self.assertTrue(session_state["used"])
         self.assertEqual(session_id, tests.SESSION_ID)
         self.assertEqual(instance, urlparse(tests.SERVER_URL).netloc)
 
@@ -171,6 +173,7 @@ class TestSalesforceLogin(unittest.TestCase):
             re.compile(r'^https://login.salesforce.com/.*$'), login_args,
             response_body=tests.TOKEN_LOGIN_RESPONSE_SUCCESS)
 
+
     def test_token_login_failure(self):
         """Test a failed JWT Token login"""
         return_mock = Mock()
@@ -187,6 +190,7 @@ class TestSalesforceLogin(unittest.TestCase):
                 consumer_key='12345.abcde',
                 privatekey_file=str(Path(__file__).parent / 'sample-key.pem')
                 )
+
         self.assertTrue(self.mockrequest.post.called)
 
     @responses.activate
@@ -194,7 +198,7 @@ class TestSalesforceLogin(unittest.TestCase):
         """Test a failed JWT Token login that also produces a helful warning"""
         responses.add(
             responses.POST,
-            re.compile(r'^https://login.*$'),
+            re.compile(r"^https://login.*$"),
             # pylint: disable=line-too-long
             body='{"error": "invalid_grant", "error_description": "user '
                  'hasn\'t approved this consumer"}',
@@ -204,9 +208,10 @@ class TestSalesforceLogin(unittest.TestCase):
             'used': False,
             }
 
+
         # pylint: disable=missing-docstring,unused-argument
         def on_response(*args, **kwargs):
-            session_state['used'] = True
+            session_state["used"] = True
 
         session = requests.Session()
         session.hooks = {

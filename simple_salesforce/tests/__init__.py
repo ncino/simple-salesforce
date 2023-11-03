@@ -1,11 +1,11 @@
 """Simple-Salesforce Tests"""
 # pylint: disable=line-too-long
 
-SESSION_ID = '12345'
-INSTANCE_URL = 'https://na15.salesforce.com'
-TOKEN_ID = 'https://na15.salesforce.com/id/00Di0000000icUB/0DFi00000008UYO'
-METADATA_URL = 'https://na15.salesforce.com/services/Soap/m/29.0/00Di0000000icUB'
-SERVER_URL = 'https://na15.salesforce.com/services/Soap/c/29.0/00Di0000000icUB/0DFi00000008UYO'
+SESSION_ID = "12345"
+INSTANCE_URL = "https://na15.salesforce.com"
+TOKEN_ID = "https://na15.salesforce.com/id/00Di0000000icUB/0DFi00000008UYO"
+METADATA_URL = "https://na15.salesforce.com/services/Soap/m/29.0/00Di0000000icUB"
+SERVER_URL = "https://na15.salesforce.com/services/Soap/c/29.0/00Di0000000icUB/0DFi00000008UYO"
 PROXIES = {
     "http": "http://10.10.1.10:3128",
     "https": "http://10.10.1.10:1080",

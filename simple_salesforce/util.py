@@ -2,10 +2,14 @@
 
 import xml.dom.minidom
 
-from .exceptions import (SalesforceExpiredSession, SalesforceGeneralError,
-                         SalesforceMalformedRequest,
-                         SalesforceMoreThanOneRecord, SalesforceRefusedRequest,
-                         SalesforceResourceNotFound)
+from .exceptions import (
+    SalesforceExpiredSession,
+    SalesforceGeneralError,
+    SalesforceMalformedRequest,
+    SalesforceMoreThanOneRecord,
+    SalesforceRefusedRequest,
+    SalesforceResourceNotFound,
+)
 
 
 # pylint: disable=invalid-name
@@ -23,10 +27,7 @@ def getUniqueElementValueFromXmlString(xmlString, elementName):
     elementValue = None
     if len(elementsByName) > 0:
         elementValue = (
-            elementsByName[0]
-            .toxml()
-            .replace('<' + elementName + '>', '')
-            .replace('</' + elementName + '>', '')
+            elementsByName[0].toxml().replace("<" + elementName + ">", "").replace("</" + elementName + ">", "")
         )
     return elementValue
 

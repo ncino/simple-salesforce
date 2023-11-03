@@ -13,7 +13,7 @@ from .exceptions import SalesforceGeneralError
 
 
 class SFBulkHandler:
-    """ Bulk API request handler
+    """Bulk API request handler
     Intermediate class which allows us to use commands,
      such as 'sf.bulk.Contacts.create(...)'
     This is really just a middle layer, whose sole purpose is
@@ -41,15 +41,10 @@ class SFBulkHandler:
 
         # Define these headers separate from Salesforce class,
         # as bulk uses a slightly different format
-        self.headers = {
-            'Content-Type': 'application/json',
-            'X-SFDC-Session': self.session_id,
-            'X-PrettyPrint': '1'
-            }
+        self.headers = {"Content-Type": "application/json", "X-SFDC-Session": self.session_id, "X-PrettyPrint": "1"}
 
     def __getattr__(self, name):
-        return SFBulkType(object_name=name, bulk_url=self.bulk_url,
-                          headers=self.headers, session=self.session)
+        return SFBulkType(object_name=name, bulk_url=self.bulk_url, headers=self.headers, session=self.session)
 
 
 class SFBulkType:
@@ -77,6 +72,7 @@ class SFBulkType:
                     external_id_field=None):
         """ Create a bulk job
 
+
         Arguments:
 
         * operation -- Bulk operation to be performed by job
@@ -95,8 +91,8 @@ class SFBulkType:
             'contentType': 'JSON'
             }
 
-        if operation == 'upsert':
-            payload['externalIdFieldName'] = external_id_field
+        if operation == "upsert":
+            payload["externalIdFieldName"] = external_id_field
 
         url = f'{self.bulk_url}job'
 
@@ -107,9 +103,7 @@ class SFBulkType:
 
     def _close_job(self, job_id):
         """ Close a bulk job """
-        payload = {
-            'state': 'Closed'
-            }
+        payload = {"state": "Closed"}
 
         url = f'{self.bulk_url}job/{job_id}'
 
@@ -121,13 +115,11 @@ class SFBulkType:
     def _get_job(self, job_id):
         """ Get an existing job to check the status """
         url = f'{self.bulk_url}job/{job_id}'
-
-        result = call_salesforce(url=url, method='GET', session=self.session,
-                                 headers=self.headers)
+        result = call_salesforce(url=url, method="GET", session=self.session, headers=self.headers)
         return result.json(object_pairs_hook=OrderedDict)
 
     def _add_batch(self, job_id, data, operation):
-        """ Add a set of data as a batch to an existing job
+        """Add a set of data as a batch to an existing job
         Separating this out in case of later
         implementations involving multiple batches
         """
@@ -137,8 +129,7 @@ class SFBulkType:
         if operation not in ('query', 'queryAll'):
             data = json.dumps(data, allow_nan=False)
 
-        result = call_salesforce(url=url, method='POST', session=self.session,
-                                 headers=self.headers, data=data)
+        result = call_salesforce(url=url, method="POST", session=self.session, headers=self.headers, data=data)
         return result.json(object_pairs_hook=OrderedDict)
 
     def _get_batch(self, job_id, batch_id):
@@ -146,8 +137,7 @@ class SFBulkType:
 
         url = f'{self.bulk_url}job/{job_id}/batch/{batch_id}'
 
-        result = call_salesforce(url=url, method='GET', session=self.session,
-                                 headers=self.headers)
+        result = call_salesforce(url=url, method="GET", session=self.session, headers=self.headers)
         return result.json(object_pairs_hook=OrderedDict)
 
     def _get_batch_results(self, job_id, batch_id, operation):
@@ -155,8 +145,8 @@ class SFBulkType:
 
         url = f'{self.bulk_url}job/{job_id}/batch/{batch_id}/result'
 
-        result = call_salesforce(url=url, method='GET', session=self.session,
-                                 headers=self.headers)
+        result = call_salesforce(url=url, method="GET", session=self.session, headers=self.headers)
+
 
         if operation in ('query', 'queryAll'):
             for batch_result in result.json():
@@ -254,6 +244,7 @@ class SFBulkType:
                         external_id_field=None, batch_size=10000, wait=5,
                         bypass_results=False):
         """ String together helper functions to create a complete
+
         end-to-end bulk API request
         Arguments:
         * operation -- Bulk operation to be performed by job
@@ -313,10 +304,9 @@ class SFBulkType:
                                    use_serial=use_serial,
                                    external_id_field=external_id_field)
 
-            batch = self._add_batch(job_id=job['id'], data=data,
-                                    operation=operation)
+            batch = self._add_batch(job_id=job["id"], data=data, operation=operation)
 
-            self._close_job(job_id=job['id'])
+            self._close_job(job_id=job["id"])
 
             batch_status = self._get_batch(job_id=batch['jobId'],
                                            batch_id=batch['id'])
@@ -408,6 +398,7 @@ class SFBulkType:
                                        operation='hardDelete', data=data,
                                        batch_size=batch_size,
                                        bypass_results=bypass_results)
+
         return results
 
     def query(self, data, lazy_operation=False, wait=5):

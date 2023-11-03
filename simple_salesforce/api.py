@@ -2,7 +2,7 @@
 
 # has to be defined prior to login import
 DEFAULT_API_VERSION = '59.0'
-import base64
+
 import json
 import logging
 import re
@@ -17,6 +17,8 @@ from .exceptions import SalesforceGeneralError
 from .login import SalesforceLogin
 from .metadata import SfdcMetadataApi
 from .util import date_to_iso8601, exception_handler
+from .metadata import SfdcMetadataApi
+from .sfdc_session import SfdcSession
 
 # pylint: disable=invalid-name
 logger = logging.getLogger(__name__)
@@ -107,7 +109,7 @@ class Salesforce:
         """
 
         if domain is None:
-            domain = 'login'
+            domain = "login"
 
         # Determine if the user passed in the optional version and/or
         # domain kwargs
@@ -128,8 +130,7 @@ class Salesforce:
 
         # Determine if the user wants to use our username/password auth or pass
         # in their own information
-        if all(arg is not None for arg in (
-                username, password, security_token)):
+        if all(arg is not None for arg in (username, password, security_token)):
             self.auth_type = "password"
 
             # Pass along the username/password to our login helper
@@ -145,8 +146,7 @@ class Salesforce:
                 domain=self.domain)
             self._refresh_session()
 
-        elif all(arg is not None for arg in (
-                session_id, instance or instance_url)):
+        elif all(arg is not None for arg in (session_id, instance or instance_url)):
             self.auth_type = "direct"
             self.session_id = session_id
 
@@ -289,7 +289,7 @@ class Salesforce:
         * keyword arguments supported by requests.request (e.g. json, timeout)
         """
         url = self.base_url + "sobjects"
-        result = self._call_salesforce('GET', url, name='describe', **kwargs)
+        result = self._call_salesforce("GET", url, name="describe", **kwargs)
 
         json_result = self.parse_result_to_json(result)
         if len(json_result) == 0:
@@ -325,7 +325,7 @@ class Salesforce:
         if name.startswith('__'):
             return super().__getattr__(name)
 
-        if name == 'bulk':
+        if name == "bulk":
             # Deal with bulk API functions
             return SFBulkHandler(self.session_id, self.bulk_url, self.proxies,
                                  self.session)
@@ -352,7 +352,7 @@ class Salesforce:
         url = f'{self.base_url}sobjects/User/{user}/password'
         params = {'NewPassword': password}
 
-        result = self._call_salesforce('POST', url, data=json.dumps(params))
+        result = self._call_salesforce("POST", url, data=json.dumps(params))
 
         if result.status_code == 204:
             return None
@@ -366,7 +366,7 @@ class Salesforce:
         return self.parse_result_to_json(result)
 
     # Generic Rest Function
-    def restful(self, path, params=None, method='GET', **kwargs):
+    def restful(self, path, params=None, method="GET", **kwargs):
         """Allows you to make a direct REST call if you know the path
 
         Arguments:
@@ -378,8 +378,7 @@ class Salesforce:
         """
 
         url = self.base_url + path
-        result = self._call_salesforce(method, url, name=path, params=params,
-                                       **kwargs)
+        result = self._call_salesforce(method, url, name=path, params=params, **kwargs)
 
         json_result = self.parse_result_to_json(result)
         if len(json_result) == 0:
@@ -417,11 +416,11 @@ class Salesforce:
         * search -- the fully formatted SOSL search string, e.g.
                     `FIND {Waldo}`
         """
-        url = self.base_url + 'search/'
+        url = self.base_url + "search/"
 
         # `requests` will correctly encode the query string passed as `params`
-        params = {'q': search}
-        result = self._call_salesforce('GET', url, name='search', params=params)
+        params = {"q": search}
+        result = self._call_salesforce("GET", url, name="search", params=params)
 
         json_result = self.parse_result_to_json(result)
         if len(json_result) == 0:
@@ -444,8 +443,8 @@ class Salesforce:
         """Return the result of a Salesforce request to list Organization
         limits.
         """
-        url = self.base_url + 'limits/'
-        result = self._call_salesforce('GET', url, **kwargs)
+        url = self.base_url + "limits/"
+        result = self._call_salesforce("GET", url, **kwargs)
 
         if result.status_code != 200:
             exception_handler(result)
@@ -461,17 +460,14 @@ class Salesforce:
                    SELECT Id FROM Lead WHERE Email = "waldo@somewhere.com"
         * include_deleted -- True if deleted records should be included
         """
-        url = self.base_url + ('queryAll/' if include_deleted else 'query/')
-        params = {'q': query}
+        url = self.base_url + ("queryAll/" if include_deleted else "query/")
+        params = {"q": query}
         # `requests` will correctly encode the query string passed as `params`
-        result = self._call_salesforce('GET', url, name='query',
-                                       params=params, **kwargs)
+        result = self._call_salesforce("GET", url, name="query", params=params, **kwargs)
 
         return self.parse_result_to_json(result)
 
-    def query_more(
-            self, next_records_identifier, identifier_is_url=False,
-            include_deleted=False, **kwargs):
+    def query_more(self, next_records_identifier, identifier_is_url=False, include_deleted=False, **kwargs):
         """Retrieves more results from a query that returned more results
         than the batch maximum. Returns a dict decoded from the Salesforce
         response JSON payload.
@@ -538,8 +534,7 @@ class Salesforce:
         * include_deleted -- True if the query should include deleted records.
         """
 
-        records = self.query_all_iter(query, include_deleted=include_deleted,
-                                      **kwargs)
+        records = self.query_all_iter(query, include_deleted=include_deleted, **kwargs)
         all_records = list(records)
         return {
             'records': all_records,
@@ -605,8 +600,7 @@ class Salesforce:
         additional_headers = kwargs.pop('headers', {})
         headers.update(additional_headers)
 
-        result = self.session.request(
-            method, url, headers=headers, **kwargs)
+        result = self.session.request(method, url, headers=headers, **kwargs)
 
         if self._salesforce_login_partial is not None \
                 and result.status_code == 401:
@@ -618,7 +612,7 @@ class Salesforce:
         if result.status_code >= 300:
             exception_handler(result, name=name)
 
-        sforce_limit_info = result.headers.get('Sforce-Limit-Info')
+        sforce_limit_info = result.headers.get("Sforce-Limit-Info")
         if sforce_limit_info:
             self.api_usage = self.parse_api_usage(sforce_limit_info)
 
@@ -635,20 +629,16 @@ class Salesforce:
         """
         result = {}
 
-        api_usage = re.match(r'[^-]?api-usage=(?P<used>\d+)/(?P<tot>\d+)',
-                             sforce_limit_info)
-        pau = r'.+per-app-api-usage=(?P<u>\d+)/(?P<t>\d+)\(appName=(?P<n>.+)\)'
+        api_usage = re.match(r"[^-]?api-usage=(?P<used>\d+)/(?P<tot>\d+)", sforce_limit_info)
+        pau = r".+per-app-api-usage=(?P<u>\d+)/(?P<t>\d+)\(appName=(?P<n>.+)\)"
         per_app_api_usage = re.match(pau, sforce_limit_info)
 
         if api_usage and api_usage.groups():
             groups = api_usage.groups()
-            result['api-usage'] = Usage(used=int(groups[0]),
-                                        total=int(groups[1]))
+            result["api-usage"] = Usage(used=int(groups[0]), total=int(groups[1]))
         if per_app_api_usage and per_app_api_usage.groups():
             groups = per_app_api_usage.groups()
-            result['per-app-api-usage'] = PerAppUsage(used=int(groups[0]),
-                                                      total=int(groups[1]),
-                                                      name=groups[2])
+            result["per-app-api-usage"] = PerAppUsage(used=int(groups[0]), total=int(groups[1]), name=groups[2])
 
         return result
 
@@ -692,6 +682,7 @@ class Salesforce:
         """"Parse json from a Response object"""
         return result.json(object_pairs_hook=self._object_pairs_hook,
                            parse_float=self._parse_float)
+
 
 
 class SFType:
@@ -951,6 +942,7 @@ class SFType:
             }
         additional_headers = kwargs.pop('headers', {})
         headers.update(additional_headers or {})
+
         result = self.session.request(method, url, headers=headers, **kwargs)
         # pylint: disable=W0212
         if (self.salesforce
@@ -964,7 +956,7 @@ class SFType:
         if result.status_code >= 300:
             exception_handler(result, self.name)
 
-        sforce_limit_info = result.headers.get('Sforce-Limit-Info')
+        sforce_limit_info = result.headers.get("Sforce-Limit-Info")
         if sforce_limit_info:
             self.api_usage = Salesforce.parse_api_usage(sforce_limit_info)
 

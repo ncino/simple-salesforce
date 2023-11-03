@@ -309,6 +309,7 @@ class SfdcMetadataApi:
             'soapenv:Body/mt:deployResponse/mt:result/mt:state',
             self._XML_NAMESPACES).text
 
+
         return async_process_id, state
 
     @staticmethod
@@ -364,6 +365,7 @@ class SfdcMetadataApi:
             self._XML_NAMESPACES)
         if result is None:
             raise Exception(f"Result node could not be found: {res.text}")
+
 
         return result
 
@@ -542,6 +544,7 @@ class SfdcMetadataApi:
                                                **kwargs)
         state = result.find('mt:status', self._XML_NAMESPACES).text
         error_message = result.find('mt:errorMessage', self._XML_NAMESPACES)
+
         if error_message is not None:
             error_message = error_message.text
 
@@ -557,6 +560,7 @@ class SfdcMetadataApi:
 
         # Retrieve base64 encoded ZIP file
         zipfile_base64 = result.find('mt:zipFile', self._XML_NAMESPACES).text
+
         zipfile = b64decode(zipfile_base64)
 
         return state, error_message, messages, zipfile
@@ -567,6 +571,7 @@ class SfdcMetadataApi:
                                                **kwargs)
         state = result.find('mt:status', self._XML_NAMESPACES).text
         error_message = result.find('mt:errorMessage', self._XML_NAMESPACES)
+
         if error_message is not None:
             error_message = error_message.text
 
@@ -579,5 +584,6 @@ class SfdcMetadataApi:
                 'file': message.find('mt:fileName', self._XML_NAMESPACES).text,
                 'message': message.find('mt:problem', self._XML_NAMESPACES).text
                 })
+
 
         return state, error_message, messages

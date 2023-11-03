@@ -29,11 +29,12 @@ def _create_sf_type(
         )
 
 
+
 class TestSFType(unittest.TestCase):
     """Tests for the SFType instance"""
 
     def setUp(self):
-        request_patcher = patch('simple_salesforce.api.requests')
+        request_patcher = patch("simple_salesforce.api.requests")
         self.mockrequest = request_patcher.start()
         self.addCleanup(request_patcher.stop)
 
@@ -53,8 +54,8 @@ class TestSFType(unittest.TestCase):
             )
 
         request_headers = responses.calls[0].request.headers
-        additional_request_header = request_headers['Sforce-Auto-Assign']
-        self.assertEqual(additional_request_header, 'FALSE')
+        additional_request_header = request_headers["Sforce-Auto-Assign"]
+        self.assertEqual(additional_request_header, "FALSE")
         self.assertEqual(result, {})
 
     @responses.activate
@@ -87,8 +88,8 @@ class TestSFType(unittest.TestCase):
             )
 
         request_headers = responses.calls[0].request.headers
-        additional_request_header = request_headers['Sforce-Auto-Assign']
-        self.assertEqual(additional_request_header, 'FALSE')
+        additional_request_header = request_headers["Sforce-Auto-Assign"]
+        self.assertEqual(additional_request_header, "FALSE")
         self.assertEqual(result, {})
 
     @responses.activate
@@ -122,13 +123,14 @@ class TestSFType(unittest.TestCase):
             )
 
         request_headers = responses.calls[0].request.headers
-        additional_request_header = request_headers['Sforce-Auto-Assign']
-        self.assertEqual(additional_request_header, 'FALSE')
+        additional_request_header = request_headers["Sforce-Auto-Assign"]
+        self.assertEqual(additional_request_header, "FALSE")
         self.assertEqual(result, {})
 
     @responses.activate
     def test_describe_layout_without_additional_request_headers(self):
         """Ensure describe_layout requests without additional headers"""
+
         responses.add(
             responses.GET,
             re.compile(r'^https://.*/Case/describe/layouts/444$'),
@@ -138,11 +140,12 @@ class TestSFType(unittest.TestCase):
 
         sf_type = _create_sf_type()
 
-        self.assertEqual(sf_type.describe_layout(record_id='444'), {})
+        self.assertEqual(sf_type.describe_layout(record_id="444"), {})
 
     @responses.activate
     def test_get_with_additional_request_headers(self):
         """Ensure custom headers are used for get requests"""
+
         responses.add(
             responses.GET,
             re.compile(r'^https://.*/Case/444$'),
@@ -156,9 +159,10 @@ class TestSFType(unittest.TestCase):
             headers={'Sforce-Auto-Assign': 'FALSE'}
             )
 
+
         request_headers = responses.calls[0].request.headers
-        additional_request_header = request_headers['Sforce-Auto-Assign']
-        self.assertEqual(additional_request_header, 'FALSE')
+        additional_request_header = request_headers["Sforce-Auto-Assign"]
+        self.assertEqual(additional_request_header, "FALSE")
         self.assertEqual(result, {})
 
     @responses.activate
@@ -171,9 +175,10 @@ class TestSFType(unittest.TestCase):
             status=http.OK
             )
 
+
         sf_type = _create_sf_type()
 
-        self.assertEqual(sf_type.get(record_id='444'), {})
+        self.assertEqual(sf_type.get(record_id="444"), {})
 
     @responses.activate
     def test_get_by_custom_id_with_additional_request_headers(self):
@@ -192,9 +197,10 @@ class TestSFType(unittest.TestCase):
             headers={'Sforce-Auto-Assign': 'FALSE'}
             )
 
+
         request_headers = responses.calls[0].request.headers
-        additional_request_header = request_headers['Sforce-Auto-Assign']
-        self.assertEqual(additional_request_header, 'FALSE')
+        additional_request_header = request_headers["Sforce-Auto-Assign"]
+        self.assertEqual(additional_request_header, "FALSE")
         self.assertEqual(result, {})
 
     @responses.activate
@@ -212,6 +218,7 @@ class TestSFType(unittest.TestCase):
             custom_id_field='some-field',
             custom_id='444'
             )
+
 
         self.assertEqual(result, {})
 
@@ -231,9 +238,10 @@ class TestSFType(unittest.TestCase):
             headers={'Sforce-Auto-Assign': 'FALSE'}
             )
 
+
         request_headers = responses.calls[0].request.headers
-        additional_request_header = request_headers['Sforce-Auto-Assign']
-        self.assertEqual(additional_request_header, 'FALSE')
+        additional_request_header = request_headers["Sforce-Auto-Assign"]
+        self.assertEqual(additional_request_header, "FALSE")
         self.assertEqual(result, {})
 
     @responses.activate
@@ -247,7 +255,7 @@ class TestSFType(unittest.TestCase):
             )
 
         sf_type = _create_sf_type()
-        result = sf_type.create(data={'some': 'data'})
+        result = sf_type.create(data={"some": "data"})
 
         self.assertEqual(result, {})
 
@@ -269,8 +277,8 @@ class TestSFType(unittest.TestCase):
             )
 
         request_headers = responses.calls[0].request.headers
-        additional_request_header = request_headers['Sforce-Auto-Assign']
-        self.assertEqual(additional_request_header, 'FALSE')
+        additional_request_header = request_headers["Sforce-Auto-Assign"]
+        self.assertEqual(additional_request_header, "FALSE")
         self.assertEqual(result, http.OK)
 
     @responses.activate
@@ -309,8 +317,8 @@ class TestSFType(unittest.TestCase):
             )
 
         request_headers = responses.calls[0].request.headers
-        additional_request_header = request_headers['Sforce-Auto-Assign']
-        self.assertEqual(additional_request_header, 'FALSE')
+        additional_request_header = request_headers["Sforce-Auto-Assign"]
+        self.assertEqual(additional_request_header, "FALSE")
         self.assertEqual(result, http.OK)
 
     @responses.activate
@@ -348,8 +356,8 @@ class TestSFType(unittest.TestCase):
             )
 
         request_headers = responses.calls[0].request.headers
-        additional_request_header = request_headers['Sforce-Auto-Assign']
-        self.assertEqual(additional_request_header, 'FALSE')
+        additional_request_header = request_headers["Sforce-Auto-Assign"]
+        self.assertEqual(additional_request_header, "FALSE")
         self.assertEqual(result, http.OK)
 
     @responses.activate
@@ -363,7 +371,7 @@ class TestSFType(unittest.TestCase):
             )
 
         sf_type = _create_sf_type()
-        result = sf_type.delete(record_id='some-case-id')
+        result = sf_type.delete(record_id="some-case-id")
 
         self.assertEqual(result, http.OK)
 
@@ -384,8 +392,8 @@ class TestSFType(unittest.TestCase):
             )
 
         request_headers = responses.calls[0].request.headers
-        additional_request_header = request_headers['Sforce-Auto-Assign']
-        self.assertEqual(additional_request_header, 'FALSE')
+        additional_request_header = request_headers["Sforce-Auto-Assign"]
+        self.assertEqual(additional_request_header, "FALSE")
         self.assertEqual(result, {})
 
     @responses.activate
@@ -399,8 +407,7 @@ class TestSFType(unittest.TestCase):
             )
 
         sf_type = _create_sf_type()
-        result = sf_type.deleted(
-            start=datetime.now(), end=datetime.now())
+        result = sf_type.deleted(start=datetime.now(), end=datetime.now())
 
         self.assertEqual(result, {})
 
@@ -421,8 +428,8 @@ class TestSFType(unittest.TestCase):
             )
 
         request_headers = responses.calls[0].request.headers
-        additional_request_header = request_headers['Sforce-Auto-Assign']
-        self.assertEqual(additional_request_header, 'FALSE')
+        additional_request_header = request_headers["Sforce-Auto-Assign"]
+        self.assertEqual(additional_request_header, "FALSE")
         self.assertEqual(result, {})
 
     @responses.activate
@@ -436,8 +443,7 @@ class TestSFType(unittest.TestCase):
             )
 
         sf_type = _create_sf_type()
-        result = sf_type.updated(
-            start=datetime.now(), end=datetime.now())
+        result = sf_type.updated(start=datetime.now(), end=datetime.now())
 
         self.assertEqual(result, {})
 
@@ -483,7 +489,7 @@ class TestSalesforce(unittest.TestCase):
 
     def setUp(self):
         """Setup the SalesforceLogin tests"""
-        request_patcher = patch('simple_salesforce.api.requests')
+        request_patcher = patch("simple_salesforce.api.requests")
         self.mockrequest = request_patcher.start()
         self.addCleanup(request_patcher.stop)
 
@@ -500,9 +506,10 @@ class TestSalesforce(unittest.TestCase):
             'called': False,
             }
 
+
         # pylint: disable=unused-argument,missing-docstring
         def on_response(*args, **kwargs):
-            session_state['called'] = True
+            session_state["called"] = True
 
         session = requests.Session()
         session.hooks = {
@@ -513,6 +520,7 @@ class TestSalesforce(unittest.TestCase):
             username='foo@bar.com',
             password='password',
             security_token='token')
+
 
         self.assertEqual(tests.SESSION_ID, client.session_id)
         self.assertEqual(session, client.session)
@@ -527,29 +535,32 @@ class TestSalesforce(unittest.TestCase):
             status=http.OK
             )
 
+
         # Use an invalid version that is guaranteed to never be used
-        expected_version = '4.2'
+        expected_version = "4.2"
         client = Salesforce(
-            session=requests.Session(), username='foo@bar.com',
-            password='password', security_token='token',
-            version=expected_version)
+            session=requests.Session(),
+            username="foo@bar.com",
+            password="password",
+            security_token="token",
+            version=expected_version,
+        )
+
 
         self.assertEqual(
             client.base_url.split('/')[-2], f'v{expected_version}')
 
+
     def test_shared_session_to_sftype(self):
         """Test Salesforce and SFType instances share default `Session`"""
-        client = Salesforce(session_id=tests.SESSION_ID,
-                            instance_url=tests.SERVER_URL)
+        client = Salesforce(session_id=tests.SESSION_ID, instance_url=tests.SERVER_URL)
 
         self.assertIs(client.session, client.Contact.session)
 
     def test_shared_custom_session_to_sftype(self):
         """Test Salesforce and SFType instances share custom `Session`"""
         session = requests.Session()
-        client = Salesforce(session_id=tests.SESSION_ID,
-                            instance_url=tests.SERVER_URL,
-                            session=session)
+        client = Salesforce(session_id=tests.SESSION_ID, instance_url=tests.SERVER_URL, session=session)
 
         self.assertIs(session, client.session)
         self.assertIs(session, client.Contact.session)
@@ -557,9 +568,7 @@ class TestSalesforce(unittest.TestCase):
     def test_proxies_inherited_default(self):
         """Test Salesforce and SFType use same proxies"""
         session = requests.Session()
-        client = Salesforce(session_id=tests.SESSION_ID,
-                            instance_url=tests.SERVER_URL,
-                            session=session)
+        client = Salesforce(session_id=tests.SESSION_ID, instance_url=tests.SERVER_URL, session=session)
 
         self.assertIs(session.proxies, client.session.proxies)
         self.assertIs(session.proxies, client.Contact.session.proxies)
@@ -568,9 +577,7 @@ class TestSalesforce(unittest.TestCase):
         """Test Salesforce and SFType use same custom proxies"""
         session = requests.Session()
         session.proxies = tests.PROXIES
-        client = Salesforce(session_id=tests.SESSION_ID,
-                            instance_url=tests.SERVER_URL,
-                            session=session)
+        client = Salesforce(session_id=tests.SESSION_ID, instance_url=tests.SERVER_URL, session=session)
         self.assertIs(tests.PROXIES, client.session.proxies)
         self.assertIs(tests.PROXIES, client.Contact.session.proxies)
 
@@ -584,6 +591,7 @@ class TestSalesforce(unittest.TestCase):
                                 instance_url=tests.SERVER_URL, session=session,
                                 proxies={})
             self.assertIn('ignoring proxies', mock_log.call_args[0][0])
+
             self.assertIs(tests.PROXIES, client.session.proxies)
 
     @responses.activate
@@ -591,11 +599,12 @@ class TestSalesforce(unittest.TestCase):
         """Make sure a header response is recorded"""
         responses.add(
             responses.GET,
-            re.compile(r'^https://.*$'),
+            re.compile(r"^https://.*$"),
             body='{"example": 1}',
             adding_headers={"Sforce-Limit-Info": "api-usage=18/5000"},
             status=http.OK
             )
+
 
         client = Salesforce.__new__(Salesforce)
         client.session = requests.Session()
@@ -605,7 +614,7 @@ class TestSalesforce(unittest.TestCase):
         client._salesforce_login_partial = None
         client.query('q')
 
-        self.assertDictEqual(client.api_usage, {'api-usage': Usage(18, 5000)})
+        self.assertDictEqual(client.api_usage, {"api-usage": Usage(18, 5000)})
 
     @responses.activate
     def test_api_usage_per_app(self):
@@ -614,7 +623,7 @@ class TestSalesforce(unittest.TestCase):
         pau = "api-usage=25/5000; per-app-api-usage=17/250(appName=sample-app)"
         responses.add(
             responses.GET,
-            re.compile(r'^https://.*$'),
+            re.compile(r"^https://.*$"),
             body='{"example": 1}',
             adding_headers={"Sforce-Limit-Info": pau},
             status=http.OK
@@ -635,36 +644,29 @@ class TestSalesforce(unittest.TestCase):
                                                                   'sample-app')
                              })
 
+
     @responses.activate
     def test_query(self):
         """Test querying generates the expected request"""
         responses.add(
-            responses.GET,
-            re.compile(r'^https://.*/query/\?q=SELECT\+ID\+FROM\+Account$'),
-            body='{}',
-            status=http.OK)
+            responses.GET, re.compile(r"^https://.*/query/\?q=SELECT\+ID\+FROM\+Account$"), body="{}", status=http.OK
+        )
         session = requests.Session()
-        client = Salesforce(session_id=tests.SESSION_ID,
-                            instance_url=tests.SERVER_URL,
-                            session=session)
+        client = Salesforce(session_id=tests.SESSION_ID, instance_url=tests.SERVER_URL, session=session)
 
-        result = client.query('SELECT ID FROM Account')
+        result = client.query("SELECT ID FROM Account")
         self.assertEqual(result, {})
 
     @responses.activate
     def test_query_include_deleted(self):
         """Test querying for all records generates the expected request"""
         responses.add(
-            responses.GET,
-            re.compile(r'^https://.*/queryAll/\?q=SELECT\+ID\+FROM\+Account$'),
-            body='{}',
-            status=http.OK)
+            responses.GET, re.compile(r"^https://.*/queryAll/\?q=SELECT\+ID\+FROM\+Account$"), body="{}", status=http.OK
+        )
         session = requests.Session()
-        client = Salesforce(session_id=tests.SESSION_ID,
-                            instance_url=tests.SERVER_URL,
-                            session=session)
+        client = Salesforce(session_id=tests.SESSION_ID, instance_url=tests.SERVER_URL, session=session)
 
-        result = client.query('SELECT ID FROM Account', include_deleted=True)
+        result = client.query("SELECT ID FROM Account", include_deleted=True)
         self.assertEqual(result, {})
 
     @responses.activate
@@ -672,17 +674,11 @@ class TestSalesforce(unittest.TestCase):
         """
         Test fetching additional results by ID generates the expected request
         """
-        responses.add(
-            responses.GET,
-            re.compile(r'^https://.*/query/next-records-id$'),
-            body='{}',
-            status=http.OK)
+        responses.add(responses.GET, re.compile(r"^https://.*/query/next-records-id$"), body="{}", status=http.OK)
         session = requests.Session()
-        client = Salesforce(session_id=tests.SESSION_ID,
-                            instance_url=tests.SERVER_URL,
-                            session=session)
+        client = Salesforce(session_id=tests.SESSION_ID, instance_url=tests.SERVER_URL, session=session)
 
-        result = client.query_more('next-records-id', identifier_is_url=False)
+        result = client.query_more("next-records-id", identifier_is_url=False)
         self.assertEqual(result, {})
 
     @responses.activate
@@ -690,18 +686,11 @@ class TestSalesforce(unittest.TestCase):
         """
         Test fetching additional results by ID generates the expected request
         """
-        responses.add(
-            responses.GET,
-            re.compile(r'^https://.*/queryAll/next-records-id$'),
-            body='{}',
-            status=http.OK)
+        responses.add(responses.GET, re.compile(r"^https://.*/queryAll/next-records-id$"), body="{}", status=http.OK)
         session = requests.Session()
-        client = Salesforce(session_id=tests.SESSION_ID,
-                            instance_url=tests.SERVER_URL,
-                            session=session)
+        client = Salesforce(session_id=tests.SESSION_ID, instance_url=tests.SERVER_URL, session=session)
 
-        result = client.query_more(
-            'next-records-id', identifier_is_url=False, include_deleted=True)
+        result = client.query_more("next-records-id", identifier_is_url=False, include_deleted=True)
         self.assertEqual(result, {})
 
     @responses.activate
@@ -711,23 +700,24 @@ class TestSalesforce(unittest.TestCase):
         """
         responses.add(
             responses.GET,
-            re.compile(r'^https://.*/query/\?q=SELECT\+ID\+FROM\+Account$'),
+            re.compile(r"^https://.*/query/\?q=SELECT\+ID\+FROM\+Account$"),
             body='{"records": [{"ID": "1"}], "done": false, "nextRecordsUrl": '
-                 '"https://example.com/query/next-records-id", "totalSize": 2}',
-            status=http.OK)
+            '"https://example.com/query/next-records-id", "totalSize": 2}',
+            status=http.OK,
+        )
         responses.add(
             responses.GET,
-            re.compile(r'^https://.*/query/next-records-id$'),
+            re.compile(r"^https://.*/query/next-records-id$"),
             body='{"records": [{"ID": "2"}], "done": true, "totalSize": 2}',
-            status=http.OK)
+            status=http.OK,
+        )
         session = requests.Session()
-        client = Salesforce(session_id=tests.SESSION_ID,
-                            instance_url=tests.SERVER_URL,
-                            session=session)
+        client = Salesforce(session_id=tests.SESSION_ID, instance_url=tests.SERVER_URL, session=session)
 
         result = client.query_all_iter('SELECT ID FROM Account')
         self.assertEqual(next(result), OrderedDict([('ID', '1')]))
         self.assertEqual(next(result), OrderedDict([('ID', '2')]))
+
         with self.assertRaises(StopIteration):
             next(result)
 
@@ -738,27 +728,28 @@ class TestSalesforce(unittest.TestCase):
         """
         responses.add(
             responses.GET,
-            re.compile(r'^https://.*/query/\?q=SELECT\+ID\+FROM\+Account$'),
+            re.compile(r"^https://.*/query/\?q=SELECT\+ID\+FROM\+Account$"),
             body='{"records": [{"ID": "1"}], "done": false, "nextRecordsUrl": '
-                 '"https://example.com/query/next-records-id", "totalSize": 2}',
-            status=http.OK)
+            '"https://example.com/query/next-records-id", "totalSize": 2}',
+            status=http.OK,
+        )
         responses.add(
             responses.GET,
-            re.compile(r'^https://.*/query/next-records-id$'),
+            re.compile(r"^https://.*/query/next-records-id$"),
             body='{"records": [{"ID": "2"}], "done": true, "totalSize": 2}',
-            status=http.OK)
+            status=http.OK,
+        )
         session = requests.Session()
-        client = Salesforce(session_id=tests.SESSION_ID,
-                            instance_url=tests.SERVER_URL,
-                            session=session)
+        client = Salesforce(session_id=tests.SESSION_ID, instance_url=tests.SERVER_URL, session=session)
 
-        result = client.query_all('SELECT ID FROM Account')
+        result = client.query_all("SELECT ID FROM Account")
         self.assertEqual(
             result,
             OrderedDict([('records', [
                 OrderedDict([('ID', '1')]),
                 OrderedDict([('ID', '2')])
                 ]), ('done', True), ('totalSize', 2)]))
+
 
     @responses.activate
     def test_query_all_include_deleted(self):
@@ -767,29 +758,29 @@ class TestSalesforce(unittest.TestCase):
         """
         responses.add(
             responses.GET,
-            re.compile(r'^https://.*/queryAll/\?q=SELECT\+ID\+FROM\+Account$'),
+            re.compile(r"^https://.*/queryAll/\?q=SELECT\+ID\+FROM\+Account$"),
             body='{"records": [{"ID": "1"}], "done": false, "nextRecordsUrl": '
-                 '"https://example.com/queryAll/next-records-id",'
-                 '"totalSize": 2}',
-            status=http.OK)
+            '"https://example.com/queryAll/next-records-id",'
+            '"totalSize": 2}',
+            status=http.OK,
+        )
         responses.add(
             responses.GET,
-            re.compile(r'^https://.*/queryAll/next-records-id$'),
+            re.compile(r"^https://.*/queryAll/next-records-id$"),
             body='{"records": [{"ID": "2"}], "done": true, "totalSize": 2}',
-            status=http.OK)
+            status=http.OK,
+        )
         session = requests.Session()
-        client = Salesforce(session_id=tests.SESSION_ID,
-                            instance_url=tests.SERVER_URL,
-                            session=session)
+        client = Salesforce(session_id=tests.SESSION_ID, instance_url=tests.SERVER_URL, session=session)
 
-        result = client.query_all('SELECT ID FROM Account',
-                                  include_deleted=True)
+        result = client.query_all("SELECT ID FROM Account", include_deleted=True)
         self.assertEqual(
             result,
             OrderedDict([('records', [
                 OrderedDict([('ID', '1')]),
                 OrderedDict([('ID', '2')])
                 ]), ('done', True), ('totalSize', 2)]))
+
 
     @responses.activate
     def test_api_limits(self):
@@ -803,9 +794,7 @@ class TestSalesforce(unittest.TestCase):
             )
 
         session = requests.Session()
-        client = Salesforce(session_id=tests.SESSION_ID,
-                            instance_url=tests.SERVER_URL,
-                            session=session)
+        client = Salesforce(session_id=tests.SESSION_ID, instance_url=tests.SERVER_URL, session=session)
 
         result = client.limits()
 

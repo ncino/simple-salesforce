@@ -67,7 +67,7 @@ def SalesforceLogin(
     """
 
     if domain is None:
-        domain = 'login'
+        domain = "login"
 
     if sf_version.startswith("v"):
         error_msg = (
@@ -208,7 +208,11 @@ def SalesforceLogin(
         except_msg = (
             'You must submit either a security token or organizationId for '
             'authentication'
+
         )
+    else:
+        except_code = "INVALID AUTH"
+        except_msg = "You must submit either a security token or organizationId for " "authentication"
         raise SalesforceAuthenticationFailed(except_code, except_msg)
 
     soap_url = f'https://{domain}.salesforce.com/services/Soap/u/{sf_version}'
@@ -224,35 +228,24 @@ def SalesforceLogin(
 
 def soap_login(soap_url, request_body, headers, proxies, session=None):
     """Process SOAP specific login workflow."""
-    response = (session or requests).post(
-        soap_url, request_body, headers=headers, proxies=proxies)
+    response = (session or requests).post(soap_url, request_body, headers=headers, proxies=proxies)
 
     if response.status_code != 200:
-        except_code = getUniqueElementValueFromXmlString(
-            response.content, 'sf:exceptionCode')
-        except_msg = getUniqueElementValueFromXmlString(
-            response.content, 'sf:exceptionMessage')
+        except_code = getUniqueElementValueFromXmlString(response.content, "sf:exceptionCode")
+        except_msg = getUniqueElementValueFromXmlString(response.content, "sf:exceptionMessage")
         raise SalesforceAuthenticationFailed(except_code, except_msg)
 
-    session_id = getUniqueElementValueFromXmlString(
-        response.content, 'sessionId')
-    server_url = getUniqueElementValueFromXmlString(
-        response.content, 'serverUrl')
+    session_id = getUniqueElementValueFromXmlString(response.content, "sessionId")
+    server_url = getUniqueElementValueFromXmlString(response.content, "serverUrl")
 
-    sf_instance = (server_url
-                   .replace('http://', '')
-                   .replace('https://', '')
-                   .split('/')[0]
-                   .replace('-api', ''))
+    sf_instance = server_url.replace("http://", "").replace("https://", "").split("/")[0].replace("-api", "")
 
     return session_id, sf_instance
 
 
-def token_login(token_url, token_data, domain, consumer_key,
-                headers, proxies, session=None):
+def token_login(token_url, token_data, domain, consumer_key, headers, proxies, session=None):
     """Process OAuth 2.0 JWT Bearer Token Flow."""
-    response = (session or requests).post(
-        token_url, token_data, headers=headers, proxies=proxies)
+    response = (session or requests).post(token_url, token_data, headers=headers, proxies=proxies)
 
     try:
         json_response = response.json()
@@ -262,8 +255,8 @@ def token_login(token_url, token_data, domain, consumer_key,
             ) from exc
 
     if response.status_code != 200:
-        except_code = json_response.get('error')
-        except_msg = json_response.get('error_description')
+        except_code = json_response.get("error")
+        except_msg = json_response.get("error_description")
         if except_msg == "user hasn't approved this consumer":
             auth_url = f'https://{domain}.salesforce.com/services/oauth2/' \
                        'authorize?response_type=code&client_id=' \
@@ -277,11 +270,9 @@ def token_login(token_url, token_data, domain, consumer_key,
     <approved URI>.""")
         raise SalesforceAuthenticationFailed(except_code, except_msg)
 
-    access_token = json_response.get('access_token')
-    instance_url = json_response.get('instance_url')
+    access_token = json_response.get("access_token")
+    instance_url = json_response.get("instance_url")
 
-    sf_instance = instance_url.replace(
-        'http://', '').replace(
-        'https://', '')
+    sf_instance = instance_url.replace("http://", "").replace("https://", "")
 
     return access_token, sf_instance
